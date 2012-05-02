@@ -19,7 +19,6 @@ def findTitle(search):
     query['search'] = search
     search = apiRequest(query)
     title = search[1][0] if len(search[1]) != 0 else looseFind(search)
-    print title
     return title
 
 def looseFind(search):
@@ -41,6 +40,7 @@ def run():
     sys.stdout = codecs.lookup('utf-8')[-1](sys.stdout)
     sys.stderr = codecs.lookup('utf-8')[-1](sys.stderr)
     title = findTitle(search)
+    print title, ' - https://en.wikipedia.org/wiki/%s' % title
     body = getBody(title)
     try:
         print body
