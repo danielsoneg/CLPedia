@@ -6,7 +6,7 @@ Offered because I find it useful, so you might too.
 
 Usage
 -----
-./wq.py <search terms>
+./wq.py [search terms]
 
 Description
 ------
