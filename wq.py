@@ -30,12 +30,15 @@ def getBody(title):
     soup = BeautifulSoup(html.content)
     body = soup.find(id='mw-content-text')
     actualTitle = soup.find(id='firstHeading').text.strip()
+    para = None
     if body.find('p').text.strip().endswith('may refer to:'):
-        return body.text # Is this a disambiguation page?
+        return actualTitle, body.text # Is this a disambiguation page?
     for p in body.find_all('p'):
         if len(p.text.split(' ')) >= 10 and p.parent.name != 'td': # Kludge to try to get good info.
             para = p.text.strip()
             break
+    if para == None:
+        return actualTitle, body.text# hell with it, return Something.
     return actualTitle, para
 
 def run():
