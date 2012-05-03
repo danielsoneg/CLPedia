@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 
 def apiRequest(query):
     if 'format' not in query: query['format']='json'
-    resultjson = requests.get('https://en.wikipedia.org/w/api.php',params=query)
+    resultjson = requests.get('http://en.wikipedia.org/w/api.php',params=query)
     result = json.loads(resultjson.content)
     return result
 
@@ -26,7 +26,7 @@ def looseFind(search):
     return loose['query']['searchinfo']['suggestion']
 
 def getBody(title):
-    html = requests.get('https://en.wikipedia.org/wiki/%s' % title)
+    html = requests.get('http://en.wikipedia.org/wiki/%s' % title)
     soup = BeautifulSoup(html.content)
     body = soup.find(id='mw-content-text')
     actualTitle = soup.find(id='firstHeading').text.strip()
