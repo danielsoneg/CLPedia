@@ -30,21 +30,24 @@ def getBody(title):
     soup = BeautifulSoup(html.content)
     body = soup.find(id='mw-content-text')
     actualTitle = soup.find(id='firstHeading').text.strip()
-    firstPara = body.find('p').text.strip()
-    if firstPara.endswith('may refer to:'): 
-        return body.text
-    return actualTitle, firstPara
+    if body.find('p').text.strip().endswith('may refer to:'):
+        return body.text # Is this a disambiguation page?
+    for p in body.find_all('p'):
+        if len(p.text.split(' ')) >= 10 and p.parent.name != 'td': # Kludge to try to get good info.
+            para = p.text.strip()
+            break
+    return actualTitle, para
 
 def run():
     sys.stdout = codecs.lookup('utf-8')[-1](sys.stdout)
     sys.stderr = codecs.lookup('utf-8')[-1](sys.stderr)
     title = findTitle(search)
-    actualTitle, firstPara = getBody(title)
+    actualTitle, para = getBody(title)
     print actualTitle, ' - https://en.wikipedia.org/wiki/%s' % title
     try:
-        print firstPara
+        print para
     except UnicodeEncodeError:
-        print firstPara.encode('ascii','replace')
+        print para.encode('ascii','replace')
 
 def usage():
     print """wq - Command Line Wiki Query-er
