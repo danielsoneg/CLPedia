@@ -6,8 +6,6 @@ import sys
 import codecs
 from bs4 import BeautifulSoup
 
-search = ' '.join(sys.argv[1:]) or "Pakistan"
-
 def apiRequest(query):
     if 'format' not in query: query['format']='json'
     resultjson = requests.get('https://en.wikipedia.org/w/api.php',params=query)
@@ -31,21 +29,30 @@ def getBody(title):
     html = requests.get('https://en.wikipedia.org/wiki/%s' % title)
     soup = BeautifulSoup(html.content)
     body = soup.find(id='mw-content-text')
+    actualTitle = soup.find(id='firstHeading').text.strip()
     firstPara = body.find('p').text.strip()
     if firstPara.endswith('may refer to:'): 
         return body.text
-    return firstPara
+    return actualTitle, firstPara
 
 def run():
     sys.stdout = codecs.lookup('utf-8')[-1](sys.stdout)
     sys.stderr = codecs.lookup('utf-8')[-1](sys.stderr)
     title = findTitle(search)
-    print title, ' - https://en.wikipedia.org/wiki/%s' % title
-    body = getBody(title)
+    actualTitle, firstPara = getBody(title)
+    print actualTitle, ' - https://en.wikipedia.org/wiki/%s' % title
     try:
-        print body
+        print firstPara
     except UnicodeEncodeError:
-        print body.encode('ascii','replace')
+        print firstPara.encode('ascii','replace')
+
+def usage():
+    print """wq - Command Line Wiki Query-er
+    Usage: wq <search term>"""
 
 if __name__ == "__main__":
+    if len(sys.argv) == 1:
+        usage()
+        sys.exit()
+    search = ' '.join(sys.argv[1:])
     run()
